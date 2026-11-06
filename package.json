@@ -1,0 +1,28 @@
+{
+  "name": "dexter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal Bun + LangChain agent harness — P0/P1/P2 of the Dexter rebuild.",
+  "module": "src/index.ts",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun --watch run src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "smoke": "bun run scripts/smoke.ts",
+    "accept": "bash scripts/acceptance.sh"
+  },
+  "dependencies": {
+    "@langchain/anthropic": "^1.6.0",
+    "@langchain/core": "^1.3.4",
+    "@langchain/google-genai": "^2.3.4",
+    "@langchain/ollama": "^1.3.0",
+    "@langchain/openai": "^1.8.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "typescript": "^5.9.3"
+  }
+}

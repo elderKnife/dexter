@@ -1,0 +1,48 @@
+1. package.json:
+    文件名固定，写清楚需要的依赖和脚本，在别人那里直接bun install即可安装依赖到node_modules，，，，这是什么项目、怎么跑、依赖什么、要不要发布
+2. config.ts：
+    写配置，这里是外层配置，类似于.env` / `process.env` 里的字符串转成带类型、带默认值、带边界的 `Config`
+3. llm.ts：
+    config.ts 决定"用哪个名字"，llm.ts 决定"这个名字背后是谁、怎么连上"。create函数产生一个Promise<BaseChatModel>
+    BaseChatModel 是 LangChain 中所有聊天模型的共同父类和统一接口；只要对象属于这种类型，你就能调用 invoke() 发消息、挂工具，而调用方完全不需要知道背后是 OpenAI、Anthropic 还是本地 Ollama
+    .env ──> config.ts ──> index.ts ──┬──> llm.ts ──> @langchain/openai
+                                      │            ──> @langchain/anthropic
+                                      │            ──> @langchain/google-genai
+                                      │            ──> @langchain/ollama
+                                      └──> agent.ts（只认 BaseChatModel 接口）
+4.registry.ts：
+    顾名思义，用来登记我总共写了哪些工具，新工具注册进对象表 → createTools() 把它们变成数组 → agent 拿数组去调。这个数组如下
+    DynamicStructuredTool[] = [
+      {
+        name: 'calculator',
+        description: 'Evaluate exactly one arithmetic expression (+ - * / % and parentheses)...',
+        schema: ZodObject { expression: string },
+        func: [Function: async],        // ← 真正的实现就在这个字段里
+        // 还有 LangChain 内部字段：lc_*, callbacks, tags, metadata, returnDirect...
+      },
+      ..............
+    ]
+
+5.agent.ts：
+    用户每次提问 → 生成一个 RunOptions → runAgent 拿着它，在内部多轮调用 LLM（带着不断增长的 messages），直到回答或预算耗尽。
+    ***********其中runOption是包含了模型BaseChatModel，工具表StructuredToolInterface[]，用户提问String的接口**********************
+    runAgent(RunOptions)                       ← ① 配置只用一次
+      │
+      ├─ model.bindTools(tools)                ← 把工具挂到客户端上（一次）
+      │
+      ├─ invoke(messages)  → AIMessage{tool_calls}     ← ② 第 1 次交互             =======message就是prompt
+      ├─ tool.invoke(args) → "…"                       ← 执行工具
+      ├─ invoke(messages)  → AIMessage{content:"42"}   ← ③ 第 2 次交互
+      └─ return "42"
+
+    prompt内存里是 BaseMessage[] 对象数组；只有过网络那一刻才序列化成 JSON
+    AIMessage是 LangChain 的类实例，不是文件；同样只在网络上以 JSON 形式存在
+
+6.index.ts
+    将模块组织起来，bun start自动找package.json，自动找script字段，找到start对应这个文件，成功启动
+
+
+
+
+
+

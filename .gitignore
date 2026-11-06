@@ -1,0 +1,22 @@
+# 依赖与产物
+node_modules/
+dist/
+
+# 密钥（绝对不要提交）
+.env
+.env.*
+!.env.example
+
+# 本地状态（P6 的压缩日志、P8 的记忆库等）
+.dexter/
+
+# 调试/回撤用的临时快照
+.dexter-backup/
+
+# 日志与系统文件
+*.log
+.DS_Store
+
+# 编辑器
+.idea/
+.vscode/

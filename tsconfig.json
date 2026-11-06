@@ -1,0 +1,24 @@
+//02 给 TypeScript 编译器的说明书，不是给运行时用的。tsc 读它来决定三件事：检查哪些文件、用什么规则检查、要不要产出文件。
+//关键认知：它不进入程序，也不影响程序跑起来的结果。它只影响“错误能不能在写代码时就被发现
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext"],
+    "types": ["bun"],
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "isolatedModules": true,
+
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*.ts", "scripts/**/*.ts"],
+  "exclude": ["node_modules"]
+}
